@@ -18,40 +18,41 @@ const Register = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Prevent spasi di username
+    // Validasi spasi di username
     if (name === "username" && /\s/.test(value)) {
       setError("Username tidak boleh mengandung spasi");
       return;
     }
 
-    setForm({ ...form, [name]: value });
-    setError(""); // clear error saat diketik ulang
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setError(""); // reset error saat diketik ulang
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validasi manual sebelum kirim
+    // Validasi spasi
     if (/\s/.test(form.username)) {
       setError("Username tidak boleh mengandung spasi");
       return;
     }
 
-    const { data, error } = await supabase.from("users").insert({
+    // Insert ke Supabase
+    const { error: insertError } = await supabase.from("users").insert({
       nama: form.nama,
       identitas: form.identitas,
       username: form.username,
-      password: form.password,
+      password: form.password, // ⚠️ password harus di-hash di produksi!
       role: form.role,
-      status: "pending",
+      status: "processing", // perubahan dari 'pending' ke 'processing'
     });
 
-    if (error) {
+    if (insertError) {
       setMessage("");
-      setError(`Gagal register: ${error.message}`);
+      setError(`Gagal mendaftar: ${insertError.message}`);
     } else {
       setError("");
-      setMessage("Berhasil mendaftar! Tunggu di-ACC admin 1x24 jam.");
+      setMessage("Berhasil mendaftar! Akun sedang diproses oleh admin.");
       setTimeout(() => {
         navigate("/");
       }, 2000);

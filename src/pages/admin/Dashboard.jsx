@@ -1,13 +1,14 @@
 // src/pages/admin/Dashboard.jsx
 import React from "react";
-import UserApprovalTable from "../../components/UserApprovalTable";
+import AdminLayout from "../../components/layouts/AdminLayout";
+import UserApprovalTable from "../../components/admin/UserApprovalTable";
 
 const Dashboard = () => {
   return (
-    <div className="p-6">
+    <AdminLayout>
       <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
       <UserApprovalTable />
-    </div>
+    </AdminLayout>
   );
 };
 

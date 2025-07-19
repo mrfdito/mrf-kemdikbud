@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { supabase } from "../../services/supabase"; // pastikan path-nya sesuai
+import { supabase } from "../../services/supabase";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
@@ -16,7 +16,7 @@ export default function LoginPage() {
       .from("users")
       .select("*")
       .eq("username", username)
-      .eq("password", password) // ⚠️ pastikan di backend sudah hashed, ini hanya demo
+      .eq("password", password) // ⚠️ ganti dengan hashing di production
       .single();
 
     if (error || !data) {
@@ -24,15 +24,49 @@ export default function LoginPage() {
       return;
     }
 
-    if (data.status === "pending") {
-      alert("Akun sudah terdaftar tapi belum di-ACC Admin.");
+    const { role, status } = data;
+
+    // Role Mahasiswa
+    if (role === "mahasiswa") {
+      if (status === "processing") {
+        alert("Akun Anda masih dalam proses verifikasi oleh admin.");
+        return;
+      }
+      if (status === "rejected") {
+        alert("Akun Anda ditolak. Silakan hubungi admin.");
+        return;
+      }
+      if (status === "waiting" || status === "approved") {
+        // Simpan session, dll...
+        navigate("/portal-mahasiswa");
+        return;
+      }
+    }
+
+    // Role Perusahaan
+    if (role === "perusahaan") {
+      if (status === "processing") {
+        alert("Akun Anda masih dalam proses verifikasi oleh admin.");
+        return;
+      }
+      if (
+        status === "rejected" ||
+        status === "waiting" ||
+        status === "approved"
+      ) {
+        navigate("/portal-perusahaan");
+        return;
+      }
+    }
+
+    // Role Admin (langsung masuk)
+    if (role === "admin") {
+      navigate("/dashboard-admin");
       return;
     }
 
-    if (data.status === "approved") {
-      // simpan session jika perlu
-      navigate("/portal");
-    }
+    // Jika role tidak dikenali
+    setErrorMsg("Role tidak dikenali.");
   };
 
   return (

@@ -1,16 +1,31 @@
 import { Routes, Route } from "react-router-dom";
-import Portal from "./pages/Portal";
+
+// Auth
 import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+
+// Portal
+import Portal from "./pages/Portal";
+
+// Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
-import Register from "./pages/auth/register";
+import ManageLowongan from "./pages/admin/ManageLowongan";
+import ManageUsers from "./pages/admin/ManageUsers";
+import Statistics from "./pages/admin/Statistics";
 
 function App() {
   return (
     <Routes>
+      {/* Public */}
       <Route path="/" element={<Portal />} />
       <Route path="/login" element={<Login />} />
       <Route path="/auth/register" element={<Register />} />
-      <Route path="/admin/Dashboard" element={<AdminDashboard />} />
+
+      {/* Admin */}
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin/events" element={<ManageLowongan />} />
+      <Route path="/admin/members" element={<ManageUsers />} />
+      <Route path="/admin/statistics" element={<Statistics />} />
     </Routes>
   );
 }
