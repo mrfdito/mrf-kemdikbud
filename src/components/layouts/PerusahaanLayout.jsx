@@ -18,6 +18,9 @@ const PerusahaanLayout = ({ children }) => {
           <Link to="/perusahaan/dashboard" className="block hover:underline">
             Dashboard
           </Link>
+          <Link to="/perusahaan/statistik" className="block hover:underline">
+            Statistik Perusahaan
+          </Link>
           <Link
             to="/perusahaan/kelolalowongan"
             className="block hover:underline"

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Auth
 import Login from "./pages/auth/Login";
@@ -18,8 +18,9 @@ import PerusahaanDashboard from "./pages/perusahaan/Dashboard";
 import KelolaLowongan from "./pages/perusahaan/KelolaLowongan";
 import TambahLowongan from "./pages/perusahaan/TambahLowongan";
 import EditLowongan from "./pages/perusahaan/EditLowongan";
+import StatistikPerusahaan from "./pages/perusahaan/StatistikPerusahaan";
+import DetailLowongan from "./pages/perusahaan/DetailLowongan";
 
-// import DetailLowongan from "./pages/perusahaan/DetailLowongan";
 // import DaftarPelamar from "./pages/perusahaan/DaftarPelamar";
 // import ProfilPerusahaan from "./pages/perusahaan/ProfilPerusahaan";
 
@@ -42,10 +43,8 @@ function App() {
       <Route path="/perusahaan/kelolalowongan" element={<KelolaLowongan />} />
       <Route path="/perusahaan/lowongan/tambah" element={<TambahLowongan />} />
       <Route path="/perusahaan/lowongan/edit/:id" element={<EditLowongan />} />
-
-      {/* <Route path="/perusahaan/detail-lowongan/:id" element={<DetailLowongan />} /> */}
-      {/* <Route path="/perusahaan/daftar-pelamar" element={<DaftarPelamar />} /> */}
-      {/* <Route path="/perusahaan/profil" element={<ProfilPerusahaan />} /> */}
+      <Route path="/perusahaan/statistik" element={<StatistikPerusahaan />} />
+      <Route path="/perusahaan/lowongan/:id" element={<DetailLowongan />} />
     </Routes>
   );
 }

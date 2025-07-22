@@ -1,66 +1,44 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../services/supabase";
 import PerusahaanLayout from "../../components/layouts/PerusahaanLayout";
 
 const Dashboard = () => {
-  const [stats, setStats] = useState({
-    totalLowongan: 0,
-    totalPelamar: 0,
-    diterima: 0,
-    ditolak: 0,
-  });
-
+  const [lowongan, setLowongan] = useState([]);
   const userId = localStorage.getItem("user_id");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchStats = async () => {
-      const { data: lowongan, error: lowonganError } = await supabase
+    const fetchLowongan = async () => {
+      const { data, error } = await supabase
         .from("lowongan")
-        .select("id")
+        .select("*")
         .eq("perusahaan_id", userId);
 
-      if (lowonganError) return console.error(lowonganError);
-
-      const lowonganIds = lowongan.map((l) => l.id);
-
-      const { data: lamaran } = await supabase
-        .from("lamaran")
-        .select("*")
-        .in("lowongan_id", lowonganIds);
-
-      setStats({
-        totalLowongan: lowongan.length,
-        totalPelamar: lamaran.length,
-        diterima: lamaran.filter((l) => l.status === "diterima").length,
-        ditolak: lamaran.filter((l) => l.status === "ditolak").length,
-      });
+      if (error) return console.error(error);
+      setLowongan(data);
     };
 
-    if (userId) {
-      fetchStats();
-    }
+    if (userId) fetchLowongan();
   }, [userId]);
 
   return (
     <PerusahaanLayout>
-      <h2 className="text-2xl font-semibold mb-6">Dashboard Perusahaan</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white shadow rounded-xl p-5">
-          <p className="text-gray-500">Total Lowongan</p>
-          <p className="text-3xl font-bold">{stats.totalLowongan}</p>
-        </div>
-        <div className="bg-white shadow rounded-xl p-5">
-          <p className="text-gray-500">Total Pelamar</p>
-          <p className="text-3xl font-bold">{stats.totalPelamar}</p>
-        </div>
-        <div className="bg-white shadow rounded-xl p-5">
-          <p className="text-gray-500">Diterima</p>
-          <p className="text-3xl font-bold">{stats.diterima}</p>
-        </div>
-        <div className="bg-white shadow rounded-xl p-5">
-          <p className="text-gray-500">Ditolak</p>
-          <p className="text-3xl font-bold">{stats.ditolak}</p>
-        </div>
+      <h2 className="text-2xl font-semibold mb-6">Lowongan yang Dibuat</h2>
+      <div className="grid gap-4">
+        {lowongan.map((item) => (
+          <div
+            key={item.id}
+            className="bg-white p-4 shadow rounded-xl cursor-pointer hover:bg-gray-50"
+            onClick={() => navigate(`/perusahaan/lowongan/${item.id}`)}
+          >
+            <h3 className="text-lg font-bold">{item.judul}</h3>
+            <p className="text-gray-600">{item.deskripsi}</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Deadline: {item.batas_waktu}
+            </p>
+          </div>
+        ))}
       </div>
     </PerusahaanLayout>
   );
