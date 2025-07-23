@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../services/supabase";
 
@@ -7,6 +7,21 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  // ⛔ Redirect jika sudah login
+  useEffect(() => {
+    const session = localStorage.getItem("userSession");
+    if (session) {
+      const user = JSON.parse(session);
+      if (user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (user.role === "perusahaan") {
+        navigate("/perusahaan/dashboard");
+      } else {
+        navigate("/");
+      }
+    }
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,14 +39,12 @@ export default function LoginPage() {
       return;
     }
 
-    // ✅ Simpan data user ke localStorage
-    localStorage.setItem("user_id", data.id);
-    localStorage.setItem("role", data.role);
-    localStorage.setItem("status", data.status);
+    const { id, role, status } = data;
 
-    const { role, status } = data;
+    // ✅ Simpan session dengan key yang konsisten
+    localStorage.setItem("userSession", JSON.stringify({ id, role, status }));
 
-    // Role Mahasiswa
+    // 🧭 Navigasi berdasarkan role + status
     if (role === "mahasiswa") {
       if (status === "processing") {
         alert("Akun Anda masih dalam proses verifikasi oleh admin.");
@@ -41,13 +54,10 @@ export default function LoginPage() {
         alert("Akun Anda ditolak. Silakan hubungi admin.");
         return;
       }
-      if (status === "waiting" || status === "approved") {
-        navigate("/#");
-        return;
-      }
+      navigate("/");
+      return;
     }
 
-    // Role Perusahaan
     if (role === "perusahaan") {
       if (status === "processing") {
         alert("Akun perusahaan Anda masih dalam proses verifikasi oleh admin.");
@@ -67,9 +77,8 @@ export default function LoginPage() {
       }
     }
 
-    // Role Admin
     if (role === "admin") {
-      navigate("/dashboard-admin");
+      navigate("/admin/dashboard");
       return;
     }
 

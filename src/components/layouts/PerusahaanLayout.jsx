@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const PerusahaanLayout = ({ children }) => {
   const navigate = useNavigate();
 
+  // Fungsi logout
   const handleLogout = () => {
-    localStorage.removeItem("userSession"); // hapus session
-    navigate("/login"); // redirect ke halaman login
+    localStorage.removeItem("userSession"); // Hapus session
+    navigate("/login"); // Arahkan ke halaman login
   };
+
+  // Proteksi akses halaman khusus perusahaan
+  useEffect(() => {
+    const session = localStorage.getItem("userSession");
+    if (!session) {
+      navigate("/login");
+      return;
+    }
+
+    const user = JSON.parse(session);
+
+    if (user.role !== "perusahaan") {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex">

@@ -21,9 +21,6 @@ import EditLowongan from "./pages/perusahaan/EditLowongan";
 import StatistikPerusahaan from "./pages/perusahaan/StatistikPerusahaan";
 import DetailLowongan from "./pages/perusahaan/DetailLowongan";
 
-// import DaftarPelamar from "./pages/perusahaan/DaftarPelamar";
-// import ProfilPerusahaan from "./pages/perusahaan/ProfilPerusahaan";
-
 function App() {
   return (
     <Routes>

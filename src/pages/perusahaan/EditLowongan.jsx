@@ -11,7 +11,14 @@ const EditLowongan = () => {
     lokasi: "",
     deadline: "",
     kategori_id: "",
+    rincian_penugasan: "",
+    latar_belakang_pendidikan: "",
+    kompetensi_teknis: "",
+    soft_skill: "",
+    persyaratan_khusus: "",
+    capaian_pembelajaran: "",
   });
+
   const [kategori, setKategori] = useState([]);
   const navigate = useNavigate();
 
@@ -102,6 +109,57 @@ const EditLowongan = () => {
             </option>
           ))}
         </select>
+
+        {/* Tambahan Field Baru */}
+        <textarea
+          name="rincian_penugasan"
+          placeholder="Rincian Penugasan"
+          className="w-full p-2 border rounded"
+          rows={3}
+          value={form.rincian_penugasan}
+          onChange={handleChange}
+        />
+        <textarea
+          name="latar_belakang_pendidikan"
+          placeholder="Latar Belakang Pendidikan"
+          className="w-full p-2 border rounded"
+          rows={2}
+          value={form.latar_belakang_pendidikan}
+          onChange={handleChange}
+        />
+        <textarea
+          name="kompetensi_teknis"
+          placeholder="Kompetensi Teknis"
+          className="w-full p-2 border rounded"
+          rows={2}
+          value={form.kompetensi_teknis}
+          onChange={handleChange}
+        />
+        <textarea
+          name="soft_skill"
+          placeholder="Soft Skill"
+          className="w-full p-2 border rounded"
+          rows={2}
+          value={form.soft_skill}
+          onChange={handleChange}
+        />
+        <textarea
+          name="persyaratan_khusus"
+          placeholder="Persyaratan Khusus"
+          className="w-full p-2 border rounded"
+          rows={2}
+          value={form.persyaratan_khusus}
+          onChange={handleChange}
+        />
+        <textarea
+          name="capaian_pembelajaran"
+          placeholder="Capaian Pembelajaran"
+          className="w-full p-2 border rounded"
+          rows={2}
+          value={form.capaian_pembelajaran}
+          onChange={handleChange}
+        />
+
         <button
           type="submit"
           className="bg-yellow-600 text-white px-4 py-2 rounded"
