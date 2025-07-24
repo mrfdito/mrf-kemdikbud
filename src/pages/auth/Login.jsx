@@ -41,8 +41,9 @@ export default function LoginPage() {
 
     const { id, role, status } = data;
 
-    // ✅ Simpan session dengan key yang konsisten
+    // ✅ Simpan session dan user_id agar kompatibel
     localStorage.setItem("userSession", JSON.stringify({ id, role, status }));
+    localStorage.setItem("user_id", id); // ⬅️ Tambahan ini
 
     // 🧭 Navigasi berdasarkan role + status
     if (role === "mahasiswa") {
