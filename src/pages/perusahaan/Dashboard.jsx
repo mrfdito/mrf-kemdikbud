@@ -5,6 +5,7 @@ import PerusahaanLayout from "../../components/layouts/PerusahaanLayout";
 
 const Dashboard = () => {
   const [lowongan, setLowongan] = useState([]);
+  const [namaPerusahaan, setNamaPerusahaan] = useState("");
   const userId = localStorage.getItem("user_id");
   const navigate = useNavigate();
 
@@ -19,7 +20,21 @@ const Dashboard = () => {
       setLowongan(data);
     };
 
-    if (userId) fetchLowongan();
+    const fetchNamaPerusahaan = async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("nama")
+        .eq("id", userId)
+        .single();
+
+      if (error) return console.error(error);
+      setNamaPerusahaan(data.nama);
+    };
+
+    if (userId) {
+      fetchLowongan();
+      fetchNamaPerusahaan();
+    }
   }, [userId]);
 
   return (
@@ -33,6 +48,7 @@ const Dashboard = () => {
             onClick={() => navigate(`/perusahaan/lowongan/${item.id}`)}
           >
             <h3 className="text-lg font-bold">{item.judul}</h3>
+            <p className="text-xs text-gray-500 mb-1">{namaPerusahaan}</p>
             <p className="text-gray-600">{item.deskripsi}</p>
             <p className="text-sm text-gray-500 mt-2">
               Deadline: {item.batas_waktu}

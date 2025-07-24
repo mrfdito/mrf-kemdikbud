@@ -11,7 +11,7 @@ const DetailLowongan = () => {
     const fetchLowongan = async () => {
       const { data, error } = await supabase
         .from("lowongan")
-        .select("*")
+        .select("*, perusahaan:perusahaan_id(nama)")
         .eq("id", id)
         .single();
 
@@ -29,6 +29,12 @@ const DetailLowongan = () => {
       <h2 className="text-2xl font-semibold mb-4">Detail Lowongan</h2>
       <div className="bg-white p-6 shadow rounded-xl space-y-2">
         <h3 className="text-xl font-bold mb-2">{lowongan.judul}</h3>
+
+        {/* Nama Perusahaan */}
+        <p className="text-gray-700 mb-2">
+          <strong>Perusahaan:</strong> {lowongan.perusahaan?.nama || "-"}
+        </p>
+
         <p className="text-gray-700 mb-2">{lowongan.deskripsi}</p>
         <p className="text-sm text-gray-500">
           <strong>Lokasi:</strong> {lowongan.lokasi || "-"}
@@ -40,7 +46,6 @@ const DetailLowongan = () => {
           <strong>Status:</strong> {lowongan.status}
         </p>
 
-        {/* Tambahan Field */}
         <div className="mt-4">
           <p className="text-sm text-gray-700">
             <strong>Rincian Penugasan:</strong>
