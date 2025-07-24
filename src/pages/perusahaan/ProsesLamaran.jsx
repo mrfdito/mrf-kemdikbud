@@ -5,10 +5,24 @@ import PerusahaanLayout from "../../components/layouts/PerusahaanLayout";
 const ProsesLamaran = () => {
   const [lamaranList, setLamaranList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [lowonganList, setLowonganList] = useState([]);
+  const [selectedLowonganId, setSelectedLowonganId] = useState("all");
 
-  // 🔁 Ambil user dari localStorage (gunakan key yang benar)
   const userSession = JSON.parse(localStorage.getItem("userSession"));
   const perusahaanId = userSession?.id;
+
+  const fetchLowongan = async () => {
+    const { data, error } = await supabase
+      .from("lowongan")
+      .select("id, judul")
+      .eq("perusahaan_id", perusahaanId);
+
+    if (error) {
+      console.error("Gagal fetch lowongan:", error);
+    } else {
+      setLowonganList(data);
+    }
+  };
 
   const fetchLamaran = async () => {
     setLoading(true);
@@ -35,12 +49,18 @@ const ProsesLamaran = () => {
       return;
     }
 
-    // ✅ Filter berdasarkan perusahaan yang login
+    // Filter berdasarkan perusahaan
     const filtered = data.filter(
       (item) => item.lowongan?.perusahaan_id === perusahaanId
     );
 
-    setLamaranList(filtered);
+    // Jika lowongan dipilih
+    const finalList =
+      selectedLowonganId === "all"
+        ? filtered
+        : filtered.filter((item) => item.lowongan_id === selectedLowonganId);
+
+    setLamaranList(finalList);
     setLoading(false);
   };
 
@@ -58,13 +78,39 @@ const ProsesLamaran = () => {
   };
 
   useEffect(() => {
-    if (perusahaanId) fetchLamaran();
+    if (perusahaanId) {
+      fetchLowongan();
+      fetchLamaran();
+    }
   }, [perusahaanId]);
+
+  useEffect(() => {
+    fetchLamaran(); // refresh jika filter diganti
+  }, [selectedLowonganId]);
 
   return (
     <PerusahaanLayout>
       <div className="p-4">
         <h2 className="text-xl font-bold mb-4">Proses Lamaran Masuk</h2>
+
+        {/* 🔽 Filter lowongan */}
+        <div className="mb-4">
+          <label className="block mb-1 text-sm text-gray-700">
+            Filter berdasarkan lowongan:
+          </label>
+          <select
+            value={selectedLowonganId}
+            onChange={(e) => setSelectedLowonganId(e.target.value)}
+            className="border rounded px-3 py-2"
+          >
+            <option value="all">Semua Lowongan</option>
+            {lowonganList.map((lowongan) => (
+              <option key={lowongan.id} value={lowongan.id}>
+                {lowongan.judul}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {loading ? (
           <p>Loading...</p>
