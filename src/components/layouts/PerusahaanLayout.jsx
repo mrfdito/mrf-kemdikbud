@@ -43,6 +43,12 @@ const PerusahaanLayout = ({ children }) => {
           >
             Kelola Lowongan
           </Link>
+          <Link
+            to="/perusahaan/proseslamaran"
+            className="block hover:underline"
+          >
+            Proses Lamaran
+          </Link>
           <button
             onClick={handleLogout}
             className="block text-left w-full mt-4 text-red-300 hover:text-white"

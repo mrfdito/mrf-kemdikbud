@@ -20,6 +20,7 @@ import TambahLowongan from "./pages/perusahaan/TambahLowongan";
 import EditLowongan from "./pages/perusahaan/EditLowongan";
 import StatistikPerusahaan from "./pages/perusahaan/StatistikPerusahaan";
 import DetailLowongan from "./pages/perusahaan/DetailLowongan";
+import ProsesLamaran from "./pages/perusahaan/ProsesLamaran"; // <-- ini tambahan
 
 function App() {
   return (
@@ -28,13 +29,11 @@ function App() {
       <Route path="/" element={<Portal />} />
       <Route path="/login" element={<Login />} />
       <Route path="/auth/register" element={<Register />} />
-
       {/* Admin */}
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="/admin/events" element={<ManageLowongan />} />
       <Route path="/admin/members" element={<ManageUsers />} />
       <Route path="/admin/statistics" element={<Statistics />} />
-
       {/* Perusahaan */}
       <Route path="/perusahaan/dashboard" element={<PerusahaanDashboard />} />
       <Route path="/perusahaan/kelolalowongan" element={<KelolaLowongan />} />
@@ -42,6 +41,11 @@ function App() {
       <Route path="/perusahaan/lowongan/edit/:id" element={<EditLowongan />} />
       <Route path="/perusahaan/statistik" element={<StatistikPerusahaan />} />
       <Route path="/perusahaan/lowongan/:id" element={<DetailLowongan />} />
+      <Route
+        path="/perusahaan/proseslamaran"
+        element={<ProsesLamaran />}
+      />{" "}
+      {/* <-- ini tambahan */}
     </Routes>
   );
 }
