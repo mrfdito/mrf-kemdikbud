@@ -20,7 +20,13 @@ import TambahLowongan from "./pages/perusahaan/TambahLowongan";
 import EditLowongan from "./pages/perusahaan/EditLowongan";
 import StatistikPerusahaan from "./pages/perusahaan/StatistikPerusahaan";
 import DetailLowongan from "./pages/perusahaan/DetailLowongan";
-import ProsesLamaran from "./pages/perusahaan/ProsesLamaran"; // <-- ini tambahan
+import ProsesLamaran from "./pages/perusahaan/ProsesLamaran";
+
+// Mahasiswa Pages
+import DashboardMahasiswa from "./pages/mahasiswa/DashboardMahasiswa";
+// import LowonganList from "./pages/mahasiswa/LowonganList";
+// import LowonganDetail from "./pages/mahasiswa/LowonganDetail";
+// import LamaranSaya from "./pages/mahasiswa/LamaranSaya";
 
 function App() {
   return (
@@ -29,11 +35,13 @@ function App() {
       <Route path="/" element={<Portal />} />
       <Route path="/login" element={<Login />} />
       <Route path="/auth/register" element={<Register />} />
+
       {/* Admin */}
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="/admin/events" element={<ManageLowongan />} />
       <Route path="/admin/members" element={<ManageUsers />} />
       <Route path="/admin/statistics" element={<Statistics />} />
+
       {/* Perusahaan */}
       <Route path="/perusahaan/dashboard" element={<PerusahaanDashboard />} />
       <Route path="/perusahaan/kelolalowongan" element={<KelolaLowongan />} />
@@ -41,11 +49,13 @@ function App() {
       <Route path="/perusahaan/lowongan/edit/:id" element={<EditLowongan />} />
       <Route path="/perusahaan/statistik" element={<StatistikPerusahaan />} />
       <Route path="/perusahaan/lowongan/:id" element={<DetailLowongan />} />
-      <Route
-        path="/perusahaan/proseslamaran"
-        element={<ProsesLamaran />}
-      />{" "}
-      {/* <-- ini tambahan */}
+      <Route path="/perusahaan/proseslamaran" element={<ProsesLamaran />} />
+
+      {/* Mahasiswa */}
+      <Route path="/mahasiswa/dashboard" element={<DashboardMahasiswa />} />
+      {/* <Route path="/mahasiswa/lowongan" element={<LowonganList />} /> */}
+      {/* <Route path="/mahasiswa/lowongan/:id" element={<LowonganDetail />} /> */}
+      {/* <Route path="/mahasiswa/lamaran" element={<LamaranSaya />} /> */}
     </Routes>
   );
 }

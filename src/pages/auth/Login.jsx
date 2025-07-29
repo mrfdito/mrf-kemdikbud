@@ -55,7 +55,7 @@ export default function LoginPage() {
         alert("Akun Anda ditolak. Silakan hubungi admin.");
         return;
       }
-      navigate("/");
+      navigate("/mahasiswa/dashboard");
       return;
     }
 
