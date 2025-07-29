@@ -37,9 +37,9 @@ const MahasiswaLayout = ({ children }) => {
           <Link to="/mahasiswa/lowongan" className="block hover:underline">
             Cari Lowongan
           </Link>
-          {/* <Link to="/mahasiswa/lamaran" className="block hover:underline">
+          <Link to="/mahasiswa/lamaran" className="block hover:underline">
             Lamaran Saya
-          </Link> */}
+          </Link>
           <button
             onClick={handleLogout}
             className="block text-left w-full mt-4 text-red-300 hover:text-white"
