@@ -24,8 +24,8 @@ import ProsesLamaran from "./pages/perusahaan/ProsesLamaran";
 
 // Mahasiswa Pages
 import DashboardMahasiswa from "./pages/mahasiswa/DashboardMahasiswa";
-// import LowonganList from "./pages/mahasiswa/LowonganList";
-// import LowonganDetail from "./pages/mahasiswa/LowonganDetail";
+import LowonganList from "./pages/mahasiswa/LowonganList";
+import LowonganDetail from "./pages/mahasiswa/LowonganDetail";
 // import LamaranSaya from "./pages/mahasiswa/LamaranSaya";
 
 function App() {
@@ -53,8 +53,8 @@ function App() {
 
       {/* Mahasiswa */}
       <Route path="/mahasiswa/dashboard" element={<DashboardMahasiswa />} />
-      {/* <Route path="/mahasiswa/lowongan" element={<LowonganList />} /> */}
-      {/* <Route path="/mahasiswa/lowongan/:id" element={<LowonganDetail />} /> */}
+      <Route path="/mahasiswa/lowongan" element={<LowonganList />} />
+      <Route path="/mahasiswa/lowongan/:id" element={<LowonganDetail />} />
       {/* <Route path="/mahasiswa/lamaran" element={<LamaranSaya />} /> */}
     </Routes>
   );

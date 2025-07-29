@@ -34,10 +34,10 @@ const MahasiswaLayout = ({ children }) => {
           <Link to="/mahasiswa/dashboard" className="block hover:underline">
             Dashboard
           </Link>
-          {/* <Link to="/mahasiswa/lowongan" className="block hover:underline">
+          <Link to="/mahasiswa/lowongan" className="block hover:underline">
             Cari Lowongan
           </Link>
-          <Link to="/mahasiswa/lamaran" className="block hover:underline">
+          {/* <Link to="/mahasiswa/lamaran" className="block hover:underline">
             Lamaran Saya
           </Link> */}
           <button
