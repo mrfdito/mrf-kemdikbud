@@ -126,6 +126,13 @@ export default function LoginPage() {
         >
           Masuk
         </button>
+
+        <div className="mt-4 text-center">
+          <span className="text-gray-600">Belum punya akun? </span>
+          <a href="/auth/register" className="text-blue-600 hover:underline">
+            Daftar
+          </a>
+        </div>
       </form>
     </div>
   );

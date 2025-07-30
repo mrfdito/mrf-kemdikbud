@@ -135,6 +135,13 @@ const Register = () => {
           {message}
         </p>
       )}
+
+      <div className="mt-4 text-center">
+        <span className="text-gray-600">Sudah punya akun? </span>
+        <a href="/login" className="text-blue-600 hover:underline">
+          Masuk
+        </a>
+      </div>
     </div>
   );
 };
