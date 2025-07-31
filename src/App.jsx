@@ -5,7 +5,10 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 
 // Portal
-import Portal from "./pages/Portal";
+import Portal from "./pages/portal/Portal";
+import LowonganListPortal from "./pages/portal/LowonganList";
+// import PerusahaanListPortal from "./pages/portal/PerusahaanList";
+// import AboutPortal from "./pages/portal/About";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -35,6 +38,9 @@ function App() {
       <Route path="/" element={<Portal />} />
       <Route path="/login" element={<Login />} />
       <Route path="/auth/register" element={<Register />} />
+      <Route path="/lowongan" element={<LowonganListPortal />} />
+      {/* <Route path="/perusahaan" element={<PerusahaanListPortal />} /> */}
+      {/* <Route path="/about" element={<AboutPortal />} /> */}
 
       {/* Admin */}
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
