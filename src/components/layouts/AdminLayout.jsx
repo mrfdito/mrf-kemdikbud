@@ -1,62 +1,185 @@
-// src/components/layouts/AdminLayout.jsx
-import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+// src/components/layouts/PortalLayout.jsx
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-const AdminLayout = ({ children }) => {
-  const navigate = useNavigate();
+const PortalLayout = ({ children }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const session = localStorage.getItem("userSession");
+  const user = session ? JSON.parse(session) : null;
 
-  // Fungsi Logout
-  const handleLogout = () => {
-    localStorage.removeItem("userSession"); // hapus session
-    navigate("/login"); // kembali ke login
+  const getDashboardLink = () => {
+    if (!user) return "/login";
+    switch (user.role) {
+      case "admin":
+        return "/admin/dashboard";
+      case "perusahaan":
+        return "/perusahaan/dashboard";
+      case "mahasiswa":
+        return "/mahasiswa/dashboard";
+      default:
+        return "/";
+    }
   };
 
-  // Proteksi halaman khusus admin
-  useEffect(() => {
-    const session = localStorage.getItem("userSession");
-    if (!session) {
-      navigate("/login");
-      return;
-    }
-
-    const user = JSON.parse(session);
-
-    if (user.role !== "admin") {
-      navigate("/login");
-    }
-  }, [navigate]);
+  const dashboardLink = getDashboardLink();
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-800 text-white p-4">
-        <h2 className="text-lg font-bold mb-6">Admin Panel</h2>
-        <nav className="space-y-2">
-          <Link to="/admin/dashboard" className="block hover:underline">
-            Dashboard
+    <div className="flex min-h-screen flex-col bg-gray-50">
+      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between p-4 px-6">
+          <Link to="/" onClick={closeMenu}>
+            <h1 className="text-xl font-bold text-gray-800">
+              MRF.<span className="text-blue-600">kemdikbud</span>
+            </h1>
           </Link>
-          <Link to="/admin/events" className="block hover:underline">
-            Kelola Lowongan
-          </Link>
-          <Link to="/admin/members" className="block hover:underline">
-            Kelola Pengguna
-          </Link>
-          <Link to="/admin/statistics" className="block hover:underline">
-            Statistik
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="block text-left w-full mt-4 text-red-300 hover:text-white"
-          >
-            Logout
-          </button>
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-6 bg-gray-100">{children}</main>
+          <div className="flex items-center">
+            <div className="hidden items-center space-x-6 md:flex">
+              <nav className="flex space-x-6 text-sm font-medium text-gray-600">
+                <Link to="/" className="transition-colors hover:text-blue-600">
+                  Home
+                </Link>
+                <Link
+                  to="/lowongan"
+                  className="transition-colors hover:text-blue-600"
+                >
+                  Cari Lowongan
+                </Link>
+                <Link
+                  to="/perusahaan"
+                  className="transition-colors hover:text-blue-600"
+                >
+                  Perusahaan
+                </Link>
+                <Link
+                  to="/about"
+                  className="transition-colors hover:text-blue-600"
+                >
+                  About
+                </Link>
+              </nav>
+              <div className="h-6 w-px bg-gray-200"></div>
+              {user ? (
+                <Link
+                  to={dashboardLink}
+                  className="rounded-lg border border-blue-600 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+                >
+                  Login
+                </Link>
+              )}
+            </div>
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="rounded-md p-2 text-gray-700 transition hover:bg-gray-100"
+                aria-label="Toggle Menu"
+              >
+                {isMenuOpen ? (
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16m-7 6h7"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+        {isMenuOpen && (
+          <div className="border-t border-gray-200 md:hidden">
+            <nav className="flex flex-col space-y-2 p-4">
+              <Link
+                to="/"
+                className="rounded-md px-3 py-2 hover:bg-gray-100"
+                onClick={closeMenu}
+              >
+                Home
+              </Link>
+              <Link
+                to="/lowongan"
+                className="rounded-md px-3 py-2 hover:bg-gray-100"
+                onClick={closeMenu}
+              >
+                Cari Lowongan
+              </Link>
+              <Link
+                to="/perusahaan"
+                className="rounded-md px-3 py-2 hover:bg-gray-100"
+                onClick={closeMenu}
+              >
+                Perusahaan
+              </Link>
+              <Link
+                to="/about"
+                className="rounded-md px-3 py-2 hover:bg-gray-100"
+                onClick={closeMenu}
+              >
+                About
+              </Link>
+              <div className="pt-4 mt-4 border-t border-gray-100">
+                {user ? (
+                  <Link
+                    to={dashboardLink}
+                    className="block w-full text-center rounded-lg border border-blue-600 px-4 py-2 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50"
+                    onClick={closeMenu}
+                  >
+                    Dashboard
+                  </Link>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="block w-full text-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+                    onClick={closeMenu}
+                  >
+                    Login
+                  </Link>
+                )}
+              </div>
+            </nav>
+          </div>
+        )}
+      </header>
+      <main className="w-full flex-1">
+        <div className="mx-auto max-w-7xl px-6 py-10">{children}</div>
+      </main>
+      <footer className="w-full border-t border-gray-200 bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-4">
+          <p className="text-center text-sm text-gray-500">
+            © {new Date().getFullYear()} MRF.kemdikbud. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
 
-export default AdminLayout;
+export default PortalLayout;
