@@ -1,4 +1,3 @@
-// src/components/portal/LowonganCard.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -16,10 +15,10 @@ const LowonganCard = ({ lowongan }) => {
 
       <div className="mt-4 text-right">
         <Link
-          to={`/mahasiswa/lowongan/${lowongan.id}`}
+          to={`/portal/lowongan/${lowongan.id}`}
           className="inline-block bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700 transition"
         >
-          Lamar
+          Cek Detail
         </Link>
       </div>
     </div>
