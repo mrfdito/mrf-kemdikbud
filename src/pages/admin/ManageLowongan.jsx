@@ -5,12 +5,19 @@ import MagangListTable from "../../components/admin/MagangListTable";
 const ManageLowongan = () => {
   return (
     <AdminLayout>
-      <h1 className="text-2xl font-bold mb-4">Daftar Lowongan Magang</h1>
-      <p className="mb-6 text-gray-600">
-        Halaman ini menampilkan semua lowongan magang yang diajukan oleh
-        perusahaan. Admin hanya dapat melihat daftar lowongan beserta statusnya.
-      </p>
-      <MagangListTable />
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Kelola Lowongan Magang
+          </h1>
+          <p className="mt-1 text-gray-600">
+            Halaman ini menampilkan semua lowongan magang yang ada di platform.
+            Anda dapat memfilter daftar berdasarkan kategori dan melihat status
+            setiap lowongan.
+          </p>
+        </div>
+        <MagangListTable />
+      </div>
     </AdminLayout>
   );
 };
