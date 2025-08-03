@@ -7,26 +7,32 @@ const ManageUsers = () => {
 
   return (
     <AdminLayout>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Kelola Pengguna</h1>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Kelola Pengguna</h1>
+          <p className="mt-1 text-gray-600">
+            Atur dan kelola semua pengguna terdaftar di platform, termasuk
+            mahasiswa dan perusahaan.
+          </p>
+        </div>
 
-        {/* Tab / Toggle */}
-        <div className="flex space-x-4 mb-4">
+        {/* Tab / Toggle yang Lebih Modern */}
+        <div className="inline-flex rounded-lg shadow-sm">
           <button
-            className={`px-4 py-2 rounded ${
+            className={`px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:z-10 ${
               selectedRole === "mahasiswa"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200"
+                ? "bg-blue-600 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-l-lg"
             }`}
             onClick={() => setSelectedRole("mahasiswa")}
           >
             Mahasiswa
           </button>
           <button
-            className={`px-4 py-2 rounded ${
+            className={`px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:z-10 ${
               selectedRole === "perusahaan"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200"
+                ? "bg-blue-600 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-50 border-t border-b border-r border-gray-300 rounded-r-lg"
             }`}
             onClick={() => setSelectedRole("perusahaan")}
           >

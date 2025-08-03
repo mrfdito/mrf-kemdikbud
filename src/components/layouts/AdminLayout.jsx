@@ -17,16 +17,14 @@ const Icon = ({ path, className = "h-6 w-6" }) => (
 
 const AdminLayout = ({ children }) => {
   const navigate = useNavigate();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
 
-  // Fungsi Logout
   const handleLogout = () => {
     localStorage.removeItem("userSession");
     navigate("/login");
   };
 
-  // Proteksi halaman dan ambil data user
   useEffect(() => {
     const session = localStorage.getItem("userSession");
     if (!session) {
@@ -41,6 +39,13 @@ const AdminLayout = ({ children }) => {
     }
   }, [navigate]);
 
+  // Set initial sidebar state based on screen size
+  useEffect(() => {
+    if (window.innerWidth >= 1024) {
+      setIsSidebarOpen(true);
+    }
+  }, []);
+
   const NavItem = ({ to, iconPath, label }) => (
     <NavLink
       to={to}
@@ -51,6 +56,11 @@ const AdminLayout = ({ children }) => {
             : "text-gray-300 hover:bg-gray-700 hover:text-white"
         }`
       }
+      onClick={() => {
+        if (window.innerWidth < 1024) {
+          setIsSidebarOpen(false);
+        }
+      }}
     >
       <Icon path={iconPath} />
       <span
@@ -64,12 +74,22 @@ const AdminLayout = ({ children }) => {
   );
 
   return (
-    <div className="flex h-screen bg-slate-100 overflow-hidden">
+    <div className="relative flex h-screen bg-slate-100 overflow-hidden">
+      {/* Backdrop Overlay for Mobile */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-transparent bg-opacity-50 z-20  lg:hidden"
+          aria-hidden="true"
+        ></div>
+      )}
+
       {/* Sidebar */}
       <aside
-        className={`bg-gray-800 text-white flex flex-col transition-all duration-300 ease-in-out ${
-          isSidebarOpen ? "w-64" : "w-20"
-        }`}
+        className={`bg-gray-800 text-white flex flex-col w-64 fixed inset-y-0 left-0 z-30
+                   transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
+                   ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+                   ${!isSidebarOpen && "lg:w-20"}`}
       >
         {/* Logo & Header Sidebar */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-700">
@@ -80,7 +100,7 @@ const AdminLayout = ({ children }) => {
           </span>
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-1 rounded-full hover:bg-gray-700"
+            className="p-1 rounded-full hover:bg-gray-700 hidden lg:block"
           >
             <Icon path="M4 6h16M4 12h16M4 18h16" className="h-5 w-5" />
           </button>
@@ -137,11 +157,23 @@ const AdminLayout = ({ children }) => {
       </aside>
 
       {/* Main Content Wrapper */}
-      <div className="flex-1 flex flex-col">
+      <div
+        className={`flex-1 flex flex-col transition-all duration-300 ease-in-out 
+                   lg:${isSidebarOpen ? "ml-64" : "ml-20"}`}
+      >
         {/* Header Bar */}
         <header className="bg-white shadow-sm h-16 flex items-center justify-between px-6">
-          <div className="text-lg font-semibold text-gray-800">
-            Selamat Datang, {user?.nama || "Admin"}!
+          <div className="flex items-center gap-4">
+            {/* Hamburger Menu for Mobile */}
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="text-gray-800 p-2 rounded-full hover:bg-gray-200 lg:hidden"
+            >
+              <Icon path="M4 6h16M4 12h16M4 18h16" className="h-5 w-5" />
+            </button>
+            <div className="text-lg font-semibold text-gray-800">
+              Selamat Datang, {user?.nama || "Admin"}!
+            </div>
           </div>
           <button
             onClick={handleLogout}
@@ -151,7 +183,7 @@ const AdminLayout = ({ children }) => {
               path="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
               className="h-5 w-5"
             />
-            Logout
+            <span className="hidden sm:inline">Logout</span>
           </button>
         </header>
 

@@ -28,7 +28,7 @@ const UserApprovalTable = () => {
   }, [selectedRole]);
 
   const handleApprove = async (user) => {
-    let updatedStatus = "waiting"; // logic dari kode pertama
+    let updatedStatus = "waiting";
     const { error } = await supabase
       .from("users")
       .update({ status: updatedStatus })
@@ -65,16 +65,16 @@ const UserApprovalTable = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-gray-900">
+    <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900">
           Persetujuan Pengguna Baru
         </h2>
 
-        <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-lg">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 p-2 sm:p-1 bg-slate-100 rounded-lg">
           <button
             onClick={() => setSelectedRole("mahasiswa")}
-            className={`px-4 py-1.5 rounded-md text-sm font-semibold transition-colors ${
+            className={`w-full sm:w-auto px-4 py-1.5 rounded-md text-sm font-semibold transition-colors ${
               selectedRole === "mahasiswa"
                 ? "bg-white text-blue-600 shadow"
                 : "bg-transparent text-gray-600 hover:text-gray-900"
@@ -84,7 +84,7 @@ const UserApprovalTable = () => {
           </button>
           <button
             onClick={() => setSelectedRole("perusahaan")}
-            className={`px-4 py-1.5 rounded-md text-sm font-semibold transition-colors ${
+            className={`w-full sm:w-auto px-4 py-1.5 rounded-md text-sm font-semibold transition-colors ${
               selectedRole === "perusahaan"
                 ? "bg-white text-blue-600 shadow"
                 : "bg-transparent text-gray-600 hover:text-gray-900"
@@ -96,13 +96,13 @@ const UserApprovalTable = () => {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
+        <table className="min-w-full text-sm text-left">
           <thead className="bg-slate-50 text-gray-600 uppercase tracking-wider">
             <tr>
-              <th className="p-4">Nama</th>
-              <th className="p-4">Identitas (NIM/NIB)</th>
-              <th className="p-4">Peran</th>
-              <th className="p-4 text-center">Aksi</th>
+              <th className="min-w-[140px] p-3">Nama</th>
+              <th className="min-w-[160px] p-3">Identitas (NIM/NIB)</th>
+              <th className="min-w-[100px] p-3">Peran</th>
+              <th className="min-w-[120px] p-3 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
