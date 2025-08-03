@@ -2,6 +2,24 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../../services/supabase";
 import PerusahaanLayout from "../../components/layouts/PerusahaanLayout";
 
+// Komponen Badge untuk Status
+const StatusBadge = ({ status }) => {
+  const baseStyle = "px-2.5 py-1 text-xs font-semibold rounded-full capitalize";
+  let style = "";
+  switch (status) {
+    case "diterima":
+      style = `bg-green-100 text-green-800 ${baseStyle}`;
+      break;
+    case "ditolak":
+      style = `bg-red-100 text-red-800 ${baseStyle}`;
+      break;
+    case "proses":
+    default:
+      style = `bg-yellow-100 text-yellow-800 ${baseStyle}`;
+  }
+  return <span className={style}>{status}</span>;
+};
+
 const ProsesLamaran = () => {
   const [lamaranList, setLamaranList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,12 +67,10 @@ const ProsesLamaran = () => {
       return;
     }
 
-    // Filter berdasarkan perusahaan
     const filtered = data.filter(
       (item) => item.lowongan?.perusahaan_id === perusahaanId
     );
 
-    // Jika lowongan dipilih
     const finalList =
       selectedLowonganId === "all"
         ? filtered
@@ -71,7 +87,11 @@ const ProsesLamaran = () => {
       .eq("id", id);
 
     if (!error) {
-      fetchLamaran(); // refresh list
+      setLamaranList((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, status: newStatus } : item
+        )
+      );
     } else {
       console.error("Gagal update status:", error);
     }
@@ -85,23 +105,35 @@ const ProsesLamaran = () => {
   }, [perusahaanId]);
 
   useEffect(() => {
-    fetchLamaran(); // refresh jika filter diganti
+    fetchLamaran();
   }, [selectedLowonganId]);
 
   return (
     <PerusahaanLayout>
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-4">Proses Lamaran Masuk</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Proses Lamaran Masuk
+          </h1>
+          <p className="mt-1 text-gray-600">
+            Tinjau dan kelola semua lamaran yang masuk untuk lowongan Anda.
+          </p>
+        </div>
+      </div>
 
-        {/* 🔽 Filter lowongan */}
-        <div className="mb-4">
-          <label className="block mb-1 text-sm text-gray-700">
-            Filter berdasarkan lowongan:
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="p-6 border-b">
+          <label
+            htmlFor="lowongan-filter"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Filter berdasarkan lowongan
           </label>
           <select
+            id="lowongan-filter"
             value={selectedLowonganId}
             onChange={(e) => setSelectedLowonganId(e.target.value)}
-            className="border rounded px-3 py-2"
+            className="w-full sm:w-auto p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 bg-white"
           >
             <option value="all">Semua Lowongan</option>
             {lowonganList.map((lowongan) => (
@@ -112,66 +144,106 @@ const ProsesLamaran = () => {
           </select>
         </div>
 
-        {loading ? (
-          <p>Loading...</p>
-        ) : lamaranList.length === 0 ? (
-          <p>Tidak ada lamaran masuk.</p>
-        ) : (
-          <table className="min-w-full border text-sm">
-            <thead className="bg-gray-100">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <th className="border px-3 py-2">Pelamar</th>
-                <th className="border px-3 py-2">Lowongan</th>
-                <th className="border px-3 py-2">Tanggal Lamar</th>
-                <th className="border px-3 py-2">CV</th>
-                <th className="border px-3 py-2">Status</th>
-                <th className="border px-3 py-2">Aksi</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Pelamar
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Lowongan
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tanggal Lamar
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  CV
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Aksi
+                </th>
               </tr>
             </thead>
-            <tbody>
-              {lamaranList.map((lamaran) => (
-                <tr key={lamaran.id}>
-                  <td className="border px-3 py-2">
-                    {lamaran.users?.nama || "-"}
-                  </td>
-                  <td className="border px-3 py-2">
-                    {lamaran.lowongan?.judul || "-"}
-                  </td>
-                  <td className="border px-3 py-2">
-                    {new Date(lamaran.tanggal_lamar).toLocaleDateString()}
-                  </td>
-                  <td className="border px-3 py-2">
-                    <a
-                      href={lamaran.cv_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 underline"
-                    >
-                      Lihat CV
-                    </a>
-                  </td>
-                  <td className="border px-3 py-2 capitalize">
-                    {lamaran.status}
-                  </td>
-                  <td className="border px-3 py-2 space-x-2">
-                    <button
-                      onClick={() => updateStatus(lamaran.id, "diterima")}
-                      className="bg-green-500 text-white px-2 py-1 rounded"
-                    >
-                      Terima
-                    </button>
-                    <button
-                      onClick={() => updateStatus(lamaran.id, "ditolak")}
-                      className="bg-red-500 text-white px-2 py-1 rounded"
-                    >
-                      Tolak
-                    </button>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-6 py-10 text-center text-gray-500"
+                  >
+                    Memuat data lamaran...
                   </td>
                 </tr>
-              ))}
+              ) : lamaranList.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="px-6 py-10 text-center text-gray-500"
+                  >
+                    <h3 className="text-lg font-semibold">Tidak Ada Lamaran</h3>
+                    <p className="mt-1">
+                      Belum ada lamaran yang masuk untuk lowongan yang dipilih.
+                    </p>
+                  </td>
+                </tr>
+              ) : (
+                lamaranList.map((lamaran) => (
+                  <tr key={lamaran.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {lamaran.users?.nama || "-"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {lamaran.lowongan?.judul || "-"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {new Date(lamaran.tanggal_lamar).toLocaleDateString(
+                        "id-ID",
+                        {
+                          day: "2-digit",
+                          month: "long",
+                          year: "numeric",
+                        }
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <a
+                        href={lamaran.cv_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-blue-600 hover:text-blue-800"
+                      >
+                        Lihat CV
+                      </a>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <StatusBadge status={lamaran.status} />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                      <button
+                        onClick={() => updateStatus(lamaran.id, "diterima")}
+                        className="bg-green-100 text-green-800 px-3 py-1.5 rounded-md font-semibold hover:bg-green-200 transition-colors disabled:opacity-50"
+                        disabled={lamaran.status === "diterima"}
+                      >
+                        Terima
+                      </button>
+                      <button
+                        onClick={() => updateStatus(lamaran.id, "ditolak")}
+                        className="bg-red-100 text-red-800 px-3 py-1.5 rounded-md font-semibold hover:bg-red-200 transition-colors disabled:opacity-50"
+                        disabled={lamaran.status === "ditolak"}
+                      >
+                        Tolak
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
-        )}
+        </div>
       </div>
     </PerusahaanLayout>
   );
