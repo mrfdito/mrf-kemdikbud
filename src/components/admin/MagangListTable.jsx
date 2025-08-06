@@ -26,8 +26,8 @@ const MagangListTable = () => {
   const [lowongan, setLowongan] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedKategori, setSelectedKategori] = useState("Semua");
+  const [search, setSearch] = useState("");
 
-  // State untuk pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -73,8 +73,13 @@ const MagangListTable = () => {
   const filteredAndSortedLowongan = useMemo(() => {
     return lowongan
       .filter((item) => {
-        if (selectedKategori === "Semua") return true;
-        return item.kategori?.nama === selectedKategori;
+        const matchesKategori =
+          selectedKategori === "Semua" ||
+          item.kategori?.nama === selectedKategori;
+        const matchesSearch = item.judul
+          .toLowerCase()
+          .includes(search.toLowerCase());
+        return matchesKategori && matchesSearch;
       })
       .sort((a, b) => {
         const aIsOld = isInactiveOrExpired(a);
@@ -84,9 +89,8 @@ const MagangListTable = () => {
         }
         return aIsOld ? 1 : -1;
       });
-  }, [lowongan, selectedKategori]);
+  }, [lowongan, selectedKategori, search]);
 
-  // Logika untuk pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredAndSortedLowongan.slice(
@@ -97,26 +101,35 @@ const MagangListTable = () => {
 
   const handleFilterChange = (e) => {
     setSelectedKategori(e.target.value);
-    setCurrentPage(1); // Kembali ke halaman pertama saat filter diubah
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setCurrentPage(1);
   };
 
   return (
     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-      {/* Header dengan Judul dan Filter */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+      {/* Header dan Filter/Search */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4">
         <div>
           <h2 className="text-xl font-bold text-gray-900">Semua Lowongan</h2>
           <p className="text-sm text-gray-500 mt-1">
             Total {filteredAndSortedLowongan.length} lowongan ditemukan.
           </p>
         </div>
-        <div className="mt-4 sm:mt-0">
-          <label htmlFor="kategori-filter" className="sr-only">
-            Filter by Kategori
-          </label>
+        <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+          <input
+            type="text"
+            placeholder="Cari berdasarkan judul..."
+            className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+            value={search}
+            onChange={handleSearchChange}
+          />
           <select
             id="kategori-filter"
-            className="w-full sm:w-auto p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition bg-white text-sm"
+            className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-sm"
             value={selectedKategori}
             onChange={handleFilterChange}
           >
@@ -129,7 +142,7 @@ const MagangListTable = () => {
         </div>
       </div>
 
-      {/* Tabel */}
+      {/* Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white text-sm">
           <thead className="bg-slate-50 text-gray-600 uppercase tracking-wider">
@@ -152,7 +165,7 @@ const MagangListTable = () => {
             ) : currentItems.length === 0 ? (
               <tr>
                 <td colSpan="6" className="text-center p-6 text-gray-500">
-                  Tidak ada lowongan yang cocok dengan filter.
+                  Tidak ada lowongan yang cocok dengan filter atau pencarian.
                 </td>
               </tr>
             ) : (
@@ -194,22 +207,43 @@ const MagangListTable = () => {
         </table>
       </div>
 
-      {/* KONTROL PAGINATION BARU (Tombol Angka) */}
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-6 pt-4 border-t">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-            <button
-              key={number}
-              onClick={() => setCurrentPage(number)}
-              className={`w-10 h-10 rounded-lg transition-colors text-sm font-semibold flex items-center justify-center ${
-                currentPage === number
-                  ? "bg-blue-600 text-white shadow"
-                  : "bg-white text-gray-700 border hover:bg-gray-100"
-              }`}
-            >
-              {number}
-            </button>
-          ))}
+        <div className="flex justify-center items-center gap-2 mt-6 pt-4 border-t flex-wrap">
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter((page) => {
+              return (
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 1 && page <= currentPage + 1)
+              );
+            })
+            .reduce((acc, page, idx, arr) => {
+              if (idx > 0 && page - arr[idx - 1] > 1) {
+                acc.push("...");
+              }
+              acc.push(page);
+              return acc;
+            }, [])
+            .map((page, index) =>
+              page === "..." ? (
+                <span key={index} className="px-2 text-gray-400">
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-10 h-10 rounded-lg transition-colors text-sm font-semibold flex items-center justify-center ${
+                    currentPage === page
+                      ? "bg-blue-600 text-white shadow"
+                      : "bg-white text-gray-700 border hover:bg-gray-100"
+                  }`}
+                >
+                  {page}
+                </button>
+              )
+            )}
         </div>
       )}
     </div>

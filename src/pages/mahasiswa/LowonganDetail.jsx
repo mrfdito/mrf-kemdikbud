@@ -3,14 +3,12 @@ import { useParams, Link } from "react-router-dom";
 import MahasiswaLayout from "../../components/layouts/MahasiswaLayout";
 import { supabase } from "../../services/supabase";
 
-// Komponen untuk setiap bagian detail agar lebih rapi
 const DetailSection = ({ title, children }) => {
   if (!children) return null;
   return (
     <div className="py-6 border-b border-gray-200">
       <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
       <div className="prose prose-sm max-w-none text-gray-600">
-        {/* Menggunakan 'dangerouslySetInnerHTML' jika deskripsi Anda berisi HTML, jika tidak, cukup <p>{children}</p> */}
         <p>{children}</p>
       </div>
     </div>
@@ -18,13 +16,13 @@ const DetailSection = ({ title, children }) => {
 };
 
 const LowonganDetail = () => {
-  // --- FUNGSI DAN LOGIKA TIDAK DIUBAH SAMA SEKALI ---
   const { id } = useParams();
   const [lowongan, setLowongan] = useState(null);
   const [statusLamaran, setStatusLamaran] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cvFile, setCvFile] = useState(null);
   const [isApplying, setIsApplying] = useState(false);
+  const [userStatus, setUserStatus] = useState(null); // ← Tambahan
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -33,6 +31,16 @@ const LowonganDetail = () => {
       if (!session) {
         setLoading(false);
         return;
+      }
+
+      // Get user status
+      const { data: user, error: userError } = await supabase
+        .from("users")
+        .select("status")
+        .eq("id", session.id)
+        .single();
+      if (!userError) {
+        setUserStatus(user.status);
       }
 
       const { data: l, error } = await supabase
@@ -59,6 +67,7 @@ const LowonganDetail = () => {
 
       setLoading(false);
     };
+
     fetchDetail();
   }, [id]);
 
@@ -90,25 +99,24 @@ const LowonganDetail = () => {
     const { data: publicUrlData } = supabase.storage
       .from("cv")
       .getPublicUrl(filePath);
-    const { error } = await supabase
-      .from("lamaran")
-      .insert([
-        {
-          user_id: session.id,
-          lowongan_id: id,
-          cv_url: publicUrlData.publicUrl,
-          status: "proses",
-        },
-      ]);
+
+    const { error } = await supabase.from("lamaran").insert([
+      {
+        user_id: session.id,
+        lowongan_id: id,
+        cv_url: publicUrlData.publicUrl,
+        status: "proses",
+      },
+    ]);
 
     if (!error) {
       alert("Lamaran berhasil dikirim!");
       setStatusLamaran("proses");
     }
+
     setIsApplying(false);
   };
 
-  // --- PERUBAHAN VISUAL HANYA PADA BAGIAN JSX DI BAWAH INI ---
   if (loading) {
     return (
       <MahasiswaLayout>
@@ -116,6 +124,7 @@ const LowonganDetail = () => {
       </MahasiswaLayout>
     );
   }
+
   if (!lowongan) {
     return (
       <MahasiswaLayout>
@@ -139,7 +148,7 @@ const LowonganDetail = () => {
     <MahasiswaLayout>
       <div className="max-w-7xl mx-auto">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-          {/* Kolom Utama (Kiri) */}
+          {/* Konten Kiri */}
           <div className="lg:col-span-2 bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
             <div>
               <span className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
@@ -152,35 +161,35 @@ const LowonganDetail = () => {
                 di {lowongan.perusahaan?.nama}
               </p>
             </div>
+
             <div className="mt-6">
               <DetailSection title="Deskripsi Pekerjaan">
-                <p>{lowongan.deskripsi}</p>
+                {lowongan.deskripsi}
               </DetailSection>
               <DetailSection title="Rincian Penugasan">
-                <p>{lowongan.rincian_penugasan}</p>
+                {lowongan.rincian_penugasan}
               </DetailSection>
               <DetailSection title="Latar Belakang Pendidikan">
-                <p>{lowongan.latar_belakang_pendidikan}</p>
+                {lowongan.latar_belakang_pendidikan}
               </DetailSection>
               <DetailSection title="Kompetensi Teknis">
-                <p>{lowongan.kompetensi_teknis}</p>
+                {lowongan.kompetensi_teknis}
               </DetailSection>
               <DetailSection title="Soft Skill yang Dibutuhkan">
-                <p>{lowongan.soft_skill}</p>
+                {lowongan.soft_skill}
               </DetailSection>
               <DetailSection title="Persyaratan Khusus">
-                <p>{lowongan.persyaratan_khusus}</p>
+                {lowongan.persyaratan_khusus}
               </DetailSection>
               <DetailSection title="Capaian Pembelajaran">
-                <p>{lowongan.capaian_pembelajaran}</p>
+                {lowongan.capaian_pembelajaran}
               </DetailSection>
             </div>
           </div>
 
-          {/* Sidebar (Kanan) */}
+          {/* Sidebar */}
           <div className="mt-8 lg:mt-0 lg:col-span-1">
             <div className="lg:sticky lg:top-24 space-y-6">
-              {/* Kotak Aksi Lamar */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 {statusLamaran ? (
                   <div>
@@ -202,7 +211,7 @@ const LowonganDetail = () => {
                       {statusLamaran}
                     </span>
                   </div>
-                ) : (
+                ) : userStatus === "approved" ? (
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                       Lamar Posisi Ini
@@ -232,10 +241,19 @@ const LowonganDetail = () => {
                       </button>
                     </div>
                   </div>
+                ) : (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Akun Belum Disetujui
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Anda hanya dapat melamar jika status akun Anda sudah
+                      disetujui oleh admin.
+                    </p>
+                  </div>
                 )}
               </div>
 
-              {/* Kartu Ringkasan */}
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-3">
                   Ringkasan Lowongan
@@ -243,27 +261,35 @@ const LowonganDetail = () => {
                 <div className="space-y-4 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-500">Lokasi</span>
-                    <span className="font-semibold text-gray-800 text-right">
+                    <span className="font-semibold text-gray-800">
                       {lowongan.lokasi || "-"}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Deadline</span>
-                    <span className="font-semibold text-gray-800 text-right">
+                    <span className="font-semibold text-gray-800">
                       {lowongan.deadline
                         ? new Date(lowongan.deadline).toLocaleDateString(
                             "id-ID",
-                            { year: "numeric", month: "long", day: "numeric" }
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            }
                           )
                         : "-"}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Diposting</span>
-                    <span className="font-semibold text-gray-800 text-right">
+                    <span className="font-semibold text-gray-800">
                       {new Date(lowongan.created_at).toLocaleDateString(
                         "id-ID",
-                        { year: "numeric", month: "long", day: "numeric" }
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }
                       )}
                     </span>
                   </div>
