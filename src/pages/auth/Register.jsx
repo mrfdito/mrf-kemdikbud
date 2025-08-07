@@ -64,7 +64,7 @@ export default function Register() {
 
   // --- PERUBAHAN HANYA PADA BAGIAN TAMPILAN (JSX) DI BAWAH INI ---
   return (
-    <div className="min-h-screen bg-slate-400 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
       <Link
         to="/"
         className="absolute top-8 left-8 flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors group"

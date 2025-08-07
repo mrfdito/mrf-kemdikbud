@@ -88,11 +88,10 @@ export default function LoginPage() {
 
   // --- PERUBAHAN HANYA PADA BAGIAN TAMPILAN (JSX) DI BAWAH INI ---
   return (
-    <div className="min-h-screen w-full bg-slate-400 flex items-center justify-center p-4">
-      {/* Tombol Kembali ke Portal */}
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-100 flex items-center justify-center px-4">
       <Link
         to="/"
-        className="absolute top-6 left-6 flex items-center gap-2 text-sm text-gray-200 hover:text-blue-600 transition-colors group z-20"
+        className="absolute top-8 left-8 flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 transition-colors group"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -108,126 +107,103 @@ export default function LoginPage() {
         </svg>
         Kembali ke Portal
       </Link>
-
-      {/* Kontainer "Melayang" */}
-      <div className="w-full max-w-4xl lg:grid lg:grid-cols-2 rounded-2xl shadow-2xl overflow-hidden">
-        {/* Sisi Kiri (Glassmorphism) */}
-        <div className="hidden lg:flex relative flex-col items-center justify-center bg-blue-600/30 backdrop-blur-lg border border-white/20 p-12 text-center text-white">
-          {/* Dekorasi Latar */}
-          <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-400/50 rounded-full filter blur-2xl"></div>
-          <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-indigo-400/50 rounded-full filter blur-2xl"></div>
-
-          <div className="relative z-10">
-            <h1 className="text-4xl font-bold tracking-tight">MRF.kemdikbud</h1>
-            <p className="mt-4 text-lg text-blue-100 max-w-sm">
-              Gerbang Anda menuju ribuan peluang magang terbaik di seluruh
-              Indonesia.
-            </p>
-          </div>
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+        {/* Header */}
+        <div className="mb-6 text-center">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Masuk ke Akun Anda
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Akses peluang magang terbaik
+          </p>
         </div>
 
-        {/* Sisi Kanan (Form Login Solid) */}
-        <div className="bg-white p-8 sm:p-12 flex flex-col justify-center">
-          <div className="w-full">
-            <div className="text-left mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
-                Selamat Datang!
-              </h2>
-              <p className="mt-2 text-gray-600">
-                Silakan masuk untuk melanjutkan.
-              </p>
+        {/* Form */}
+        <form onSubmit={handleLogin} className="space-y-5">
+          {errorMsg && (
+            <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-2 text-sm rounded-md">
+              {errorMsg}
             </div>
+          )}
 
-            <form onSubmit={handleLogin} className="space-y-6">
-              {errorMsg && (
-                <div
-                  className="bg-red-50 border-l-4 border-red-400 text-red-700 p-4 text-sm"
-                  role="alert"
-                >
-                  <p>{errorMsg}</p>
-                </div>
-              )}
-
-              <div>
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Username
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="username"
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-full border border-gray-300 px-4 py-2.5 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Password
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border border-gray-300 px-4 py-2.5 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    required
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold shadow-lg hover:bg-blue-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed transform hover:scale-105"
-              >
-                {loading ? (
-                  <svg
-                    className="animate-spin h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                ) : (
-                  "Masuk"
-                )}
-              </button>
-            </form>
-
-            <div className="mt-6 text-center text-sm">
-              <span className="text-gray-600">Belum punya akun? </span>
-              <Link
-                to="/auth/register"
-                className="font-semibold text-blue-600 hover:text-blue-500"
-              >
-                Daftar di sini
-              </Link>
-            </div>
+          <div>
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="mt-1 w-full border border-gray-300 px-4 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
           </div>
+
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 w-full border border-gray-300 px-4 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold shadow-md hover:bg-blue-700 transition disabled:bg-blue-400 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <div className="flex justify-center items-center gap-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <span>Memproses...</span>
+              </div>
+            ) : (
+              "Masuk"
+            )}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <div className="mt-6 text-center text-sm text-gray-600">
+          Belum punya akun?{" "}
+          <Link
+            to="/auth/register"
+            className="text-blue-600 font-medium hover:underline"
+          >
+            Daftar di sini
+          </Link>
         </div>
       </div>
     </div>
