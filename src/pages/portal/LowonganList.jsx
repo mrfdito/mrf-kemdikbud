@@ -4,18 +4,15 @@ import PortalLayout from "../../components/layouts/PortalLayout";
 import LowonganCard from "../../components/portal/LowonganCard";
 
 const LowonganList = () => {
-  // State yang sudah ada
   const [lowonganList, setLowonganList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedKategori, setSelectedKategori] = useState("Semua");
 
-  // State untuk pagination
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  // Sesuai permintaan: 3x2 (HP) dan 2x3 (PC) sama-sama 6 item per halaman
   const itemsPerPage = 6;
 
-  // Fetch data awal dari Supabase
   useEffect(() => {
     const fetchLowongan = async () => {
       setLoading(true);
@@ -25,21 +22,23 @@ const LowonganList = () => {
           `id, judul, lokasi, deadline, perusahaan:users (id, nama, status), kategori:kategori (nama)`
         )
         .eq("status", "aktif");
+
       if (error) {
         console.error("Gagal ambil data lowongan:", error.message);
         setLoading(false);
         return;
       }
+
       const approved = data.filter(
         (l) => l.perusahaan && l.perusahaan.status === "approved"
       );
       setLowonganList(approved);
       setLoading(false);
     };
+
     fetchLowongan();
   }, []);
 
-  // Opsi filter (tetap sama)
   const kategoriOptions = useMemo(() => {
     const allKategori = lowonganList
       .map((item) => item.kategori?.nama)
@@ -47,7 +46,6 @@ const LowonganList = () => {
     return ["Semua", ...new Set(allKategori)];
   }, [lowonganList]);
 
-  // Logika filter (tetap sama)
   const filteredLowongan = useMemo(() => {
     return lowonganList
       .filter(
@@ -60,7 +58,7 @@ const LowonganList = () => {
       );
   }, [lowonganList, searchTerm, selectedKategori]);
 
-  // Logika Pagination
+  // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredLowongan.slice(
@@ -71,17 +69,52 @@ const LowonganList = () => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Kembali ke halaman 1 saat search
+    setCurrentPage(1);
   };
 
   const handleKategoriChange = (e) => {
     setSelectedKategori(e.target.value);
-    setCurrentPage(1); // Kembali ke halaman 1 saat filter
+    setCurrentPage(1);
+  };
+
+  // Pagination condensed version with "..."
+  const renderPagination = () => {
+    const pageNumbers = [];
+    const maxVisible = 1; // jumlah angka di kiri/kanan halaman aktif
+
+    // Halaman pertama
+    pageNumbers.push(1);
+
+    // Titik-titik awal
+    if (currentPage > maxVisible + 2) {
+      pageNumbers.push("...");
+    }
+
+    // Halaman di sekitar currentPage
+    for (
+      let i = Math.max(2, currentPage - maxVisible);
+      i <= Math.min(totalPages - 1, currentPage + maxVisible);
+      i++
+    ) {
+      pageNumbers.push(i);
+    }
+
+    // Titik-titik akhir
+    if (currentPage < totalPages - maxVisible - 1) {
+      pageNumbers.push("...");
+    }
+
+    // Halaman terakhir
+    if (totalPages > 1) {
+      pageNumbers.push(totalPages);
+    }
+
+    return pageNumbers;
   };
 
   return (
     <PortalLayout>
-      {/* Header Halaman dengan Kontrol */}
+      {/* Header */}
       <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm mb-8 border border-gray-200">
         <h1 className="text-3xl font-bold text-gray-900">
           Temukan Peluang Magang
@@ -116,7 +149,7 @@ const LowonganList = () => {
         </div>
       </div>
 
-      {/* Tampilan Daftar Lowongan */}
+      {/* List Lowongan */}
       {loading ? (
         <div className="text-center py-10">
           <p className="text-gray-500">Memuat lowongan...</p>
@@ -132,31 +165,34 @@ const LowonganList = () => {
         </div>
       ) : (
         <>
-          {/* --- PERUBAHAN GRID LAYOUT DI SINI --- */}
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
             {currentItems.map((item) => (
               <LowonganCard key={item.id} lowongan={item} />
             ))}
           </div>
 
-          {/* Komponen Pagination */}
+          {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex justify-center items-center gap-2 mt-10">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (number) => (
-                  <button
-                    key={number}
-                    onClick={() => setCurrentPage(number)}
-                    className={`px-4 py-2 rounded-lg transition-colors text-sm font-semibold ${
-                      currentPage === number
+              {renderPagination().map((number, index) => (
+                <button
+                  key={index}
+                  onClick={() =>
+                    typeof number === "number" && setCurrentPage(number)
+                  }
+                  disabled={number === "..."}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors
+                    ${
+                      number === currentPage
                         ? "bg-blue-600 text-white shadow"
+                        : number === "..."
+                        ? "bg-transparent text-gray-500 cursor-default"
                         : "bg-white text-gray-700 border hover:bg-gray-100"
                     }`}
-                  >
-                    {number}
-                  </button>
-                )
-              )}
+                >
+                  {number}
+                </button>
+              ))}
             </div>
           )}
         </>
